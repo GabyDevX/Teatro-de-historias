@@ -72,6 +72,17 @@ button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
 .hint{margin:0;color:var(--muted);font-size:13px}
 .hint.warn{color:var(--lamp)}
 
+/* Salida de sonido (parlante Bluetooth, laptop, tele) */
+.out{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.out select{font:inherit;font-weight:700;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--ink);color:var(--text);min-height:40px;flex:1;min-width:200px;max-width:100%}
+.out select:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+/* Ventana de proyector (?pantalla): solo el escenario, centrado, a pantalla completa */
+body.proj{padding:0;background:#000;overflow:hidden}
+body.proj .wrap{max-width:none;height:100vh;gap:0;place-items:center}
+body.proj .wrap>:not(.stage){display:none}
+body.proj .stage{width:min(100vw,160vh);border:0;border-radius:0;box-shadow:none;cursor:none}
+
 /* Modo voz */
 .voice{display:grid;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .vbtns{display:flex;gap:10px}
@@ -178,9 +189,16 @@ button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
     </div>
     <div class="tools">
       <button class="btn sm" id="btnMute" type="button" aria-pressed="false">Sonido: sí</button>
+      <button class="btn sm" id="btnProj" type="button">Abrir pantalla</button>
       <button class="btn sm" id="btnFs" type="button">Pantalla completa</button>
     </div>
   </header>
+
+  <div class="out" id="outBox" hidden>
+    <label class="lbl" for="outSel">Sonido por</label>
+    <select id="outSel"></select>
+    <button class="btn sm" id="outAsk" type="button" hidden>Ver nombres</button>
+  </div>
 
   <nav class="stories" id="stories" aria-label="Historias"></nav>
 
@@ -237,6 +255,7 @@ button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
   </section>
 
   <p class="hint">Teclas: espacio o flecha derecha avanza, flecha izquierda vuelve, M silencia. Un control remoto de presentaciones también sirve. El sonido se activa con tu primer toque.</p>
+  <p class="hint">Proyector o tele: tocá <b>Abrir pantalla</b>, arrastrá esa ventana a la otra pantalla y apretá <b>F</b> (o doble clic) para verla completa. Ahí solo se ve la escena; el guion queda en tu laptop. El sonido sale por el dispositivo que elijas arriba.</p>
 </div>
 <script src="stories.js"></script>
 <script src="match.js"></script>
@@ -246,14 +265,41 @@ button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
 /* Estado del modo voz (se completa en la sección "Modo voz", más abajo) */
 const V={on:false,paused:false,sens:'media',base:0,cooldown:0,ignoreUntil:0,lang:0,errs:0,net:false,rec:null,lastCmd:null,last:null,timer:null,sim:false,simSeq:0};
 
+/* ?pantalla: ventana para proyector/tele. Solo muestra la escena; la manda la ventana del narrador por BroadcastChannel (mismo navegador, sin internet). */
+const PROJ=/[?&]pantalla\b/.test(location.search);
+const BC=('BroadcastChannel' in window)?new BroadcastChannel('teatro-pantalla'):null;
+let projSeen=0;
+const projAlive=()=>Date.now()-projSeen<5000;
+
 /* ---------- Audio: el motor está en audio.js (todo sintetizado con Web Audio) ---------- */
 let ctx=null,out=null,muted=false;
 /* mientras te escucha el micrófono, los efectos suenan más bajo para que no se mezclen con tu voz */
 const outGain=()=>muted?0:(V.on?.5:.8);
+
+/* Salida de sonido: el sistema manda el audio a un solo dispositivo, así que se elige acá (parlante Bluetooth, laptop, HDMI/tele). Solo Chrome/Edge. */
+const canSink=!!(window.AudioContext&&AudioContext.prototype.setSinkId);
+let outId=''; try{ outId=localStorage.getItem('teatro.out')||''; }catch(e){}
+function applySink(){
+  if(!ctx||!canSink) return;
+  ctx.setSinkId(outId).catch(()=>{ outId=''; outSave(); outList(); }); /* el dispositivo ya no está: vuelve al del sistema */
+}
+function outSave(){ try{ localStorage.setItem('teatro.out',outId); }catch(e){} }
+async function outList(){
+  if(!canSink||PROJ||!navigator.mediaDevices||!navigator.mediaDevices.enumerateDevices) return;
+  let ds=[]; try{ ds=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audiooutput'&&d.deviceId&&d.deviceId!=='default'&&d.deviceId!=='communications'); }catch(e){}
+  const named=ds.some(d=>d.label);
+  const sel=document.getElementById('outSel');
+  sel.innerHTML='<option value="">Predeterminada del sistema</option>'+ds.map((d,k)=>`<option value="${d.deviceId}">${(d.label||('Salida '+(k+1))).replace(/</g,'&lt;')}</option>`).join('');
+  if(named&&outId&&!ds.some(d=>d.deviceId===outId)){ outId=''; outSave(); applySink(); }
+  sel.value=ds.some(d=>d.deviceId===outId)?outId:'';
+  document.getElementById('outBox').hidden=false;
+  document.getElementById('outAsk').hidden=named; /* sin permiso de micrófono Chrome no da los nombres */
+}
 function ac(){
   if(!ctx){
     const C=window.AudioContext||window.webkitAudioContext; if(!C) return null;
     ctx=new C(); out=audioInit(ctx); out.gain.value=outGain();
+    if(outId) applySink();
   }
   if(ctx.state==='suspended') ctx.resume();
   return ctx;
@@ -323,6 +369,23 @@ function apply(v){
     p.classList.toggle('active',a);
     const sm=p.querySelector('small'); if(sm) sm.textContent=sub;
   });
+  bcState();
+}
+
+/* Narrador → pantalla: qué se ve (elementos, niveles, cielo, título). El sonido no viaja: sale de esta ventana. */
+function bcState(){
+  if(PROJ||!BC||!projAlive()||!S.story||!S.view) return;
+  const v=S.view;
+  BC.postMessage({t:'state',on:[...v.on],lv:v.lv,sky:v.sky,name:S.story.name,ref:S.story.ref,open:S.i>=0||S.mode==='libre'});
+}
+function projApply(m){
+  apply({on:new Set(m.on),lv:m.lv,sky:m.sky,amb:new Set()});
+  $('t1').textContent=m.name; $('t2').textContent=m.ref;
+  $('title').classList.toggle('gone',m.open); $('stage').classList.toggle('open',m.open);
+}
+function projStatus(){
+  const b=$('btnProj'); if(!b) return;
+  b.textContent=projAlive()?'Pantalla: conectada ✓':'Abrir pantalla';
 }
 
 function cueUI(){
@@ -336,6 +399,7 @@ function cueUI(){
   document.querySelectorAll('.dot').forEach((d,k)=>{d.classList.toggle('cur',k===S.i); d.classList.toggle('done',k<S.i);});
   $('btnBack').disabled=S.i<0;
   $('btnNext').textContent=S.i>=n-1?'Volver a empezar':'Siguiente';
+  bcState();
 }
 
 function go(i,play){
@@ -518,14 +582,45 @@ $('btnMute').addEventListener('click',()=>{ac(); setMuted(!muted);});
 $('btnFs').addEventListener('click',()=>{
   try{ if(document.fullscreenElement) document.exitFullscreen(); else $('app').requestFullscreen().catch(()=>{}); }catch(e){}
 });
+const toggleFs=()=>{ try{ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){} };
 document.addEventListener('keydown',ev=>{
+  if(PROJ){ if(ev.key.toLowerCase()==='f') toggleFs(); return; }
   if(ev.target.closest&&ev.target.closest('button')&&(ev.key===' '||ev.key==='Enter')) return;
   if(S.mode!=='guion') { if(ev.key.toLowerCase()==='m') setMuted(!muted); return; }
   if(ev.key===' '||ev.key==='ArrowRight'||ev.key==='PageDown'){ev.preventDefault(); next();}
   else if(ev.key==='ArrowLeft'||ev.key==='PageUp'){ev.preventDefault(); back();}
   else if(ev.key.toLowerCase()==='m') setMuted(!muted);
 });
-pick('noe');
+if(PROJ){
+  document.body.classList.add('proj'); document.title='Teatro de Historias · Pantalla';
+  $('t1').textContent='Teatro de Historias'; $('t2').textContent='Esperando al narrador…';
+  if(BC){
+    BC.onmessage=ev=>{ if(ev.data&&ev.data.t==='state') projApply(ev.data); };
+    const hello=()=>BC.postMessage({t:'hello'}); hello(); setInterval(hello,2000);
+  }
+  document.addEventListener('dblclick',toggleFs);
+  wake(); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) wake(); });
+}else{
+  if(BC) BC.onmessage=ev=>{
+    if(!ev.data||ev.data.t!=='hello') return;
+    const was=projAlive(); projSeen=Date.now();
+    if(!was){ projStatus(); bcState(); }
+  };
+  setInterval(projStatus,2000);
+  $('btnProj').addEventListener('click',()=>{
+    const u=new URL(location.href); u.search='?pantalla'; u.hash='';
+    const w=window.open(u.href,'teatro-pantalla','popup,width=1280,height=800'); if(w) w.focus();
+  });
+  if(canSink&&navigator.mediaDevices){
+    $('outSel').addEventListener('change',e=>{ outId=e.target.value; outSave(); applySink(); });
+    $('outAsk').addEventListener('click',()=>{
+      navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{ s.getTracks().forEach(t=>t.stop()); outList(); }).catch(()=>{});
+    });
+    navigator.mediaDevices.addEventListener('devicechange',outList);
+    outList();
+  }
+  pick('noe');
+}
 </script>
 </body>
 </html>

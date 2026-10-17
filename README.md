@@ -34,6 +34,15 @@ Solo se mira la escena que sigue; si te salteás una, también la siguiente a es
 
 Agregá `?sim` a la dirección (por ejemplo `http://localhost:3000/?sim`). Aparece un campo donde escribís lo que “se oye”; usa el mismo algoritmo que el micrófono.
 
+## Proyector o tele (dos pantallas)
+
+1. Conectá el proyector o la tele y en macOS elegí Ajustes del Sistema → Pantallas → **Ampliar escritorio** (no duplicar).
+2. En tu laptop abrí la página normal (con el guion) y tocá **Abrir pantalla**. Se abre una ventana (`?pantalla`) que muestra solo la escena.
+3. Arrastrá esa ventana al proyector y apretá **F** (o doble clic) para verla completa. El botón pasa a "Pantalla: conectada ✓".
+4. Todo lo que hagas en la laptop (Siguiente, voz, teclas, modo Libre) se refleja ahí al instante. Las dos ventanas tienen que estar en el mismo Chrome; no hace falta internet para eso.
+
+**Por dónde sale el sonido**: el audio sale de la ventana de tu laptop, y el sistema lo manda a un solo dispositivo. En **Sonido por** elegís cuál: la laptop, un parlante Bluetooth o la tele/proyector por HDMI. La primera vez los nombres pueden no aparecer; tocá **Ver nombres** (pide permiso de micrófono, que de todos modos usa el modo voz). Se acuerda de tu elección. Solo en Chrome/Edge.
+
 ## Agregar o editar historias
 
 Todo está en `stories.js` (arriba hay un comentario con el formato). Una historia es `{id, name, ref, sky0, beats:[…]}` y cada escena (beat) tiene:
