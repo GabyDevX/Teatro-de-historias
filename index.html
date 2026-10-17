@@ -122,6 +122,12 @@ button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
 @keyframes spout{0%,100%{opacity:.25;transform:translateY(6px) scaleY(.8)}50%{opacity:.85;transform:translateY(-4px) scaleY(1.1)}}
 .spout{transform-box:fill-box;transform-origin:50% 100%;animation:spout 3.2s ease-in-out infinite}
 .drop.near{animation-duration:.55s}
+@keyframes swellx{from{transform:translate(-36px,0)}to{transform:translate(0,-6px)}}
+.swell{animation:swellx 8s ease-in-out infinite alternate}
+@keyframes swelly{from{transform:translate(0,-4px)}to{transform:translate(-30px,3px)}}
+.swell2{animation:swelly 11s ease-in-out infinite alternate}
+@keyframes flutter{from{transform:rotate(-6deg) scaleY(.9)}to{transform:rotate(5deg) scaleY(1.05)}}
+.flutter{transform-box:fill-box;transform-origin:50% 60%;animation:flutter .8s ease-in-out infinite alternate}
 
 /* Escena */
 .lvl{transform-box:view-box;transform-origin:0 0;transition:transform var(--dur,1.3s) cubic-bezier(.45,.05,.3,1)}
@@ -155,7 +161,7 @@ button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){
   .spin,.star,.drift,.drop,.bolt,.waves,.waves2,.bob,.rock,.pulse,.swim,.flap{animation:none}
   .el,.lvl,.sky,.curtain{transition-duration:.01s}
-  #svg,.breathe,.flash,.mote,.wing,.tail,.spout{animation:none}
+  #svg,.breathe,.flash,.mote,.wing,.tail,.spout,.swell,.swell2,.flutter{animation:none}
   .vstate.on::before{animation:none}
 }
 </style>

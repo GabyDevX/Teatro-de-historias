@@ -46,11 +46,12 @@ const G={
   water2:grad('gW2',[[0,'#4a96d6'],[.4,'#2766a8'],[1,'#0c2c52']]),
   jonahGlow:rgrad('gJGlow',[[0,'#ffd9a0',.6],[1,'#ffd9a0',0]]),
   belly:rgrad('gBelly',[[0,'#3a2a55',.9],[.75,'#1c1c44',.88],[1,'#1c1c44',0]]),
-  mist:grad('gMist',[[0,'#cfe3ff',0],[1,'#cfe3ff',.28]])
+  mist:grad('gMist',[[0,'#cfe3ff',0],[1,'#cfe3ff',.28]]),
+  wfill:grad('gWFill',[[0,'#001f3e'],[1,'#000d1e']])
 };
 
 /* tamaño (px) de cada imagen recortada de img/ */
-const IM={noah:[272,640],david:[371,640],goliath:[334,700],jonah:[320,640],adam:[216,640],eve:[210,640],giraffe:[509,760],elephant:[800,540],lion:[800,589],sheep:[520,409],whale:[1100,539],dove:[384,420],fish:[420,239],ark:[1300,693],ship:[760,601],city:[1300,682],tents:[1300,676],land:[1600,497],trees:[550,560],sun:[520,504],moon:[420,420],cloud:[1100,489],storm:[1200,631],rainbow:[1300,631],flowers:[1500,638]};
+const IM={noah:[272,640],david:[371,640],goliath:[334,700],jonah:[320,640],adam:[216,640],eve:[210,640],giraffe:[509,760],elephant:[800,540],lion:[800,589],sheep:[520,409],whale:[1100,539],dove:[384,420],fish:[420,239],ark:[1300,693],ship:[760,601],city:[1300,682],tents:[1300,676],land:[1600,497],trees:[550,560],sun:[520,504],moon:[420,420],cloud:[1100,489],storm:[1200,631],rainbow:[1300,631],flowers:[1500,638],water:[1500,671],bird:[288,320],banner_red:[399,560],banner_blue:[360,560]};
 /* imagen centrada en cx, apoyada en by, de alto h (o ancho w); flip la espeja */
 const pic=(n,cx,by,o={})=>{
   const [iw,ih]=IM[n],h=o.h||o.w*ih/iw,w=o.w||h*iw/ih,x=cx-w/2,y=by-h;
@@ -94,8 +95,8 @@ const E=[
  {id:'lion',n:'León',svg:`${shadow(500,402,70)}${pic('lion',500,404,{w:140})}`,from:'translateX(80px)'},
  {id:'animals',n:'Animales',svg:`${shadow(90,402,50)}${pic('giraffe',90,404,{h:200})}${shadow(215,402,70)}${pic('elephant',215,404,{w:150})}${[[660,402,64],[708,406,58]].map(([x,y,w])=>`${shadow(x,y,w*.4)}${pic('sheep',x,y+2,{w})}`).join('')}`,from:'translateX(-80px)'},
  {id:'crowd',n:'Gente',svg:['david','eve','noah','jonah'].map((n,i)=>`<g transform="translate(${540+i*52},402)">${person(n,66+(i%2)*6)}</g>`).join(''),from:'translateX(60px)'},
- {id:'banner',n:'Banderas',svg:`<g class="bob">${[[60,'#e0415b',1],[740,'#3d79d6',-1]].map(([x,c,d])=>`<path d="M${x} 404V236" stroke="#6a4a2e" stroke-width="5"/><circle cx="${x}" cy="234" r="5" fill="#d4a84a"/><path d="M${x+d*2} 240Q${x+d*45} 232 ${x+d*90} 250Q${x+d*45} 262 ${x+d*2} 290Z" fill="${lin(c,true)}"/>`).join('')}</g>`,from:'translateY(60px)'},
- {id:'flood',n:'Agua',svg:`<g opacity=".92"><g transform="translate(0 14)"><path class="waves2" d="${waveD}V620H0Z" fill="${G.water1}"/><path class="waves2" d="${waveD}" stroke="#d8efff" stroke-opacity=".5" stroke-width="2.4" fill="none"/></g><path class="waves" d="${waveD}V620H0Z" fill="${G.water2}"/><path class="waves" d="${waveD}" stroke="#e8f6ff" stroke-opacity=".6" stroke-width="2.6" fill="none"/><rect y="30" width="800" height="60" fill="#fff" opacity=".05"/></g>`,from:'none',
+ {id:'banner',n:'Banderas',svg:`<g class="bob">${pic('banner_red',119,406,{h:190})}${pic('banner_blue',687,406,{h:190})}</g>`,from:'translateY(60px)'},
+ {id:'flood',n:'Agua',svg:`<g class="swell2" opacity=".9"><g transform="translate(0 16)">${pic('water',400,403,{w:900,flip:true})}</g></g><g class="swell">${pic('water',400,403,{w:900})}<rect x="-60" y="398" width="920" height="260" fill="${G.wfill}"/></g>`,from:'none',
   lv:['translate(0px,580px)','translate(0px,335px)','translate(0px,205px)','translate(0px,345px)','translate(0px,45px)','translate(0px,452px)'],steps:[1,2,4,3,5],dur:'2.6s'},
  {id:'fish',n:'Peces',svg:[[200,472,52,6],[520,480,60,8],[360,490,42,5]].map(([x,y,w,d])=>`<g class="swim" style="animation-duration:${d}s">${pic('fish',x,y+14,{w})}</g>`).join(''),from:'scale(.5)'},
  {id:'ship',n:'Barco',svg:`<g class="rock">${pic('ship',0,36,{w:180})}</g>`,from:'translateX(300px)',lv:['translate(400px,322px)']},
@@ -110,7 +111,7 @@ const E=[
  {id:'people',n:'Adán y Eva',svg:`<g transform="translate(325,400)">${person('adam',112)}</g><g transform="translate(378,400)">${person('eve',108)}</g>`,from:'scale(.4)'},
  {id:'stone',n:'Piedra',svg:'<circle r="7.5" fill="#bdb6a6" stroke="#7a746a" stroke-width="1.6"/><circle cx="-2" cy="-2.4" r="3" fill="#fff" opacity=".35"/>',from:'none',inst:true,lv:['translate(190px,372px)','translate(512px,216px)'],steps:[0,1],dur:'.55s'},
  {id:'dove',n:'Paloma',svg:`<g class="bob">${pic('dove',410,185,{w:84})}</g>`,from:'translate(-400px,-60px)'},
- {id:'birds',n:'Aves',svg:`<g stroke="#2a2a3a" stroke-width="2.4" fill="none" stroke-linecap="round">${[[120,120,'',20],[200,160,'11s',16],[330,100,'16s',16],[420,140,'13s',13]].map(([x,y,d,w])=>`<g class="drift"${d?` style="animation-duration:${d}"`:''}><g class="flap"><path d="M${x} ${y}q${w/2} -${w*.65} ${w} 0q${w/2} -${w*.65} ${w} 0"/></g></g>`).join('')}</g>`,from:'translateX(-80px)'},
+ {id:'birds',n:'Aves',svg:[[150,128,34,'',0],[236,168,28,'11s',1],[350,104,30,'16s',0],[440,150,24,'13s',1]].map(([x,y,w,d,f],i)=>`<g class="drift"${d?` style="animation-duration:${d}"`:''}><g class="flutter" style="animation-delay:-${i*.25}s">${pic('bird',x,y+w*.55,{w,flip:!!f})}</g></g>`).join(''),from:'translateX(-80px)'},
  {id:'rain',n:'Lluvia (imagen)',svg:rainSvg(),from:'none'}
 ];
 const EM=Object.fromEntries(E.map(e=>[e.id,e]));
