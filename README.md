@@ -70,3 +70,7 @@ Es un sitio estático: en Vercel se publica la carpeta tal cual (`vercel.json` y
 - Ambiente en bucle: en `AMBDEF`, con `mk()` que devuelve `{stop(){…}}`.
 - Dibujo: poné la imagen recortada (WebP con fondo transparente) en `img/`, anotá su tamaño en `IM` de `scene.js` y agregá un objeto a `E` (el orden es el de las capas, de atrás hacia adelante). Para una persona de pie: `person('nombre', altura)`; para cualquier imagen: `pic('nombre', centroX, pisoY, {h:altura})`.
 - Cielos: `img/sky_*.webp` (se declaran en `SKIES`).
+
+## Créditos de sonido
+
+Elefante, león y oveja son grabaciones reales (`snd/`, licencias en `snd/LICENCIAS.md`). El resto de los sonidos se sintetiza.

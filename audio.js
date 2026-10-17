@@ -25,6 +25,7 @@ function audioInit(ctx){
   const conv=A.createConvolver(); conv.buffer=impulse(2.8,2.4);
   const rv=A.createGain(); rv.gain.value=.85; BUS.wet.connect(conv); conv.connect(rv); rv.connect(master);
   ['white','pink','brown'].forEach(c=>NOISE[c]=noiseBuf(c,4));
+  loadSamples();
   return master;
 }
 
@@ -283,6 +284,18 @@ const SND={
       osc({t:t+.23,f:56,f2:36,dur:.16,vol:.45,a:.005,lp:150,rv:.5}); }
   }}
 };
+
+/* Grabaciones reales de animales (snd/*.wav, ver snd/LICENCIAS.md). Si no cargan, suena la versión sintetizada. */
+const SAMPLES={};
+function loadSamples(){
+  [['elefante','snd/elephant.wav',.9],['leon','snd/lion.wav',1],['oveja','snd/sheep.wav',.85]].forEach(([id,url,vol])=>{
+    fetch(url).then(r=>r.arrayBuffer()).then(b=>A.decodeAudioData(b)).then(buf=>{ SAMPLES[id]={buf,vol}; }).catch(()=>{});
+  });
+}
+['elefante','oveja','leon'].forEach(id=>{
+  const synth=SND[id].f;
+  SND[id].f=function(){ const s=SAMPLES[id]; if(!s) return synth(); playBuf(s.buf,{vol:s.vol,pan:rnd(-.2,.2),rv:.22}); };
+});
 
 /* una frase de pájaro: gorjeo, trino o silbido */
 function birdPhrase(t,pan,rv=.35){

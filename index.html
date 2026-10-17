@@ -122,6 +122,8 @@ button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
 @keyframes spout{0%,100%{opacity:.25;transform:translateY(6px) scaleY(.8)}50%{opacity:.85;transform:translateY(-4px) scaleY(1.1)}}
 .spout{transform-box:fill-box;transform-origin:50% 100%;animation:spout 3.2s ease-in-out infinite}
 .drop.near{animation-duration:.55s}
+@keyframes fly{from{transform:translateX(930px)}to{transform:translateX(-130px)}}
+.fly{animation:fly 40s linear infinite}
 @keyframes swellx{from{transform:translate(-36px,0)}to{transform:translate(0,-6px)}}
 .swell{animation:swellx 8s ease-in-out infinite alternate}
 @keyframes swelly{from{transform:translate(0,-4px)}to{transform:translate(-30px,3px)}}
@@ -162,6 +164,7 @@ button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
   .spin,.star,.drift,.drop,.bolt,.waves,.waves2,.bob,.rock,.pulse,.swim,.flap{animation:none}
   .el,.lvl,.sky,.curtain{transition-duration:.01s}
   #svg,.breathe,.flash,.mote,.wing,.tail,.spout,.swell,.swell2,.flutter{animation:none}
+  .fly{animation:none;transform:translateX(380px)}
   .vstate.on::before{animation:none}
 }
 </style>

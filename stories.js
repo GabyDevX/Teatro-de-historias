@@ -60,15 +60,15 @@ const STORIES=[
   {t:'Jonás dijo: “Es culpa mía. Tírenme al mar.” ¡Splash! Y el mar se calmó.',rm:['rain','lightning','stormcloud'],lv:{jonah:2},sky:'dawn',amb:['olas','musica_misterio'],snd:['chapuzon'],keys:['culpa','tirenme','mar se calmo','splash']},
   {t:'Dios envió un gran pez que se lo tragó entero.',add:['whale'],lv:{whale:1,jonah:3},snd:['ballena',['chapuzon',1.4]],keys:['gran pez','pez','trago','ballena']},
   {t:'Tres días y tres noches estuvo adentro. Allí Jonás oró y le pidió perdón a Dios.',rm:['ship'],lv:{flood:4},sky:'deep',amb:['submarino','musica_misterio'],snd:['latido',['gotas',1.5]],keys:['tres dias','tres noches','oro','perdon']},
-  {t:'Dios habló al pez, y este escupió a Jonás en la playa.',rm:['whale'],add:['sun'],lv:{whale:0,flood:5,jonah:4},sky:'day',amb:['olas','pajaros','musica_calma'],snd:['ballena','chapuzon'],keys:['escupio','playa']},
-  {t:'Esta vez Jonás obedeció: fue a Nínive, la gente escuchó y decidió cambiar.',add:['city','crowd','trees'],lv:{jonah:5},amb:['pajaros','murmullo','musica_triunfo'],snd:['fanfarria','multitud'],keys:['obedecio','escucho','cambiar']}
+  {t:'Dios habló al pez, y este escupió a Jonás en la playa.',rm:['whale','land'],add:['sun','beach'],lv:{whale:0,flood:6,jonah:4},sky:'day',amb:['olas','pajaros','musica_calma'],snd:['ballena','chapuzon'],keys:['escupio','playa']},
+  {t:'Esta vez Jonás obedeció: fue a Nínive, la gente escuchó y decidió cambiar.',rm:['beach'],add:['land','city','crowd','trees'],lv:{jonah:5,flood:5},amb:['pajaros','murmullo','musica_triunfo'],snd:['fanfarria','multitud'],keys:['obedecio','escucho','cambiar']}
  ]},
  {id:'creacion',name:'La Creación',ref:'Génesis 1–2',sky0:'void',beats:[
   {t:'Al principio todo estaba oscuro y vacío… pero Dios estaba allí.',sky:'void',amb:['musica_misterio'],snd:['inicio'],keys:['principio','oscuro','vacio']},
   {t:'Dios dijo: “¡Que haya luz!” Y hubo luz.',add:['godlight'],sky:'dawn',snd:['coro','brillo'],keys:['que haya luz','luz']},
   {t:'Separó la luz de la oscuridad: el día y la noche.',rm:['godlight'],add:['sun','moon','stars'],sky:'dusk',snd:['arpa'],keys:['dia y la noche','separo','oscuridad']},
   {t:'Hizo el cielo con sus nubes y juntó las aguas en el mar.',rm:['moon','stars'],add:['cloud','flood'],lv:{flood:1},sky:'day',amb:['olas','musica_calma'],snd:['chapuzon'],keys:['cielo','nubes','aguas','mar']},
-  {t:'Salió la tierra seca, y brotaron árboles y flores de todos los colores.',add:['land','trees','flowers'],lv:{flood:5},snd:['brillo'],keys:['tierra seca','arboles','flores']},
+  {t:'Salió la tierra seca, y brotaron árboles y flores de todos los colores.',add:['land','trees','flowers'],lv:{flood:7},snd:['brillo'],keys:['tierra seca','arboles','flores']},
   {t:'Llenó el mar de peces y el cielo de aves.',add:['fish','birds'],amb:['olas','pajaros','musica_calma'],snd:['chapuzon',['pajaro',.8]],keys:['peces','aves']},
   {t:'Luego creó los animales: grandes y pequeños, mansos y feroces.',add:['animals','lion'],snd:['elefante',['oveja',1],['leon',1.8]],keys:['animales','mansos','feroces']},
   {t:'Y por último hizo a las personas, a su imagen, para cuidar de todo lo creado.',add:['people'],snd:['coro'],keys:['personas','imagen']},
