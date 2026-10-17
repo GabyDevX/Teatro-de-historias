@@ -51,7 +51,7 @@ const G={
 };
 
 /* tamaño (px) de cada imagen recortada de img/ */
-const IM={noah:[272,640],david:[371,640],goliath:[334,700],jonah:[320,640],adam:[216,640],eve:[210,640],giraffe:[509,760],elephant:[800,540],lion:[800,589],sheep:[520,409],whale:[1100,539],dove:[384,420],fish:[420,239],ark:[1300,693],ship:[760,601],city:[1300,682],tents:[1300,676],land:[1600,497],trees:[550,560],sun:[520,504],moon:[420,420],cloud:[1100,489],storm:[1200,631],rainbow:[1300,631],flowers:[1500,638],water:[1500,671],bird:[288,320],banner_red:[399,560],banner_blue:[360,560],stone:[96,70],beach:[1500,370]};
+const IM={noah:[272,640],david:[371,640],goliath:[334,700],jonah:[320,640],adam:[216,640],eve:[210,640],giraffe:[509,760],elephant:[800,540],lion:[800,589],sheep:[520,409],whale:[1100,539],dove:[384,420],fish:[420,239],ark:[1300,693],ship:[760,601],city:[1300,682],tents:[1300,676],land:[1600,497],trees:[550,560],sun:[520,504],moon:[420,420],cloud:[1100,489],storm:[1200,631],rainbow:[1300,631],flowers:[1500,638],water:[1500,671],bird:[288,320],banner_red:[399,560],banner_blue:[360,560],stone:[96,70],beach:[1500,370],nin1:[219,640],nin2:[246,640],nin3:[302,640],nin4:[248,600],nin5:[293,640]};
 /* imagen centrada en cx, apoyada en by, de alto h (o ancho w); flip la espeja */
 const pic=(n,cx,by,o={})=>{
   const [iw,ih]=IM[n],h=o.h||o.w*ih/iw,w=o.w||h*iw/ih,x=cx-w/2,y=by-h;
@@ -97,7 +97,7 @@ const E=[
  {id:'sheep',n:'Ovejas',svg:[[60,405,66],[110,418,66],[255,410,60]].map(([x,y,w])=>`${shadow(x,y,w*.4)}${pic('sheep',x,y+2,{w})}`).join(''),from:'scale(.5)'},
  {id:'lion',n:'León',svg:`${shadow(500,402,70)}${pic('lion',500,404,{w:140})}`,from:'translateX(80px)'},
  {id:'animals',n:'Animales',svg:`${shadow(90,402,50)}${pic('giraffe',90,404,{h:200})}${shadow(215,402,70)}${pic('elephant',215,404,{w:150})}${[[660,402,64],[708,406,58]].map(([x,y,w])=>`${shadow(x,y,w*.4)}${pic('sheep',x,y+2,{w})}`).join('')}`,from:'translateX(-80px)'},
- {id:'crowd',n:'Gente',svg:[['#c0563c','#e3b48a','#f2e6d0'],['#3f7fb5','#b9825a','#6b3b22'],['#7a9a4a','#f0c9a0','#f2e6d0'],['#8a5aa8','#9c6a46','#3a2418'],['#d9a441','#e3b48a','#6b3b22']].map(([robe,skin,hair],i)=>`<g transform="translate(${505+i*46},402) scale(${(0.92+(i%2)*.1).toFixed(2)})">${villager(robe,skin,hair)}</g>`).join(''),from:'translateX(60px)'},
+ {id:'crowd',n:'Gente de Nínive',svg:[['nin1',84],['nin2',80],['nin4',58],['nin3',74],['nin5',82]].map(([n,h],i)=>`<g transform="translate(${500+i*54},404)">${person(n,h)}</g>`).join(''),from:'translateX(60px)'},
  {id:'banner',n:'Banderas',svg:`<g class="bob">${pic('banner_red',119,406,{h:190})}${pic('banner_blue',687,406,{h:190})}</g>`,from:'translateY(60px)'},
  {id:'flood',n:'Agua',svg:`<g class="swell2" opacity=".9"><g transform="translate(0 16)">${pic('water',400,403,{w:900,flip:true})}</g></g><g class="swell">${pic('water',400,403,{w:900})}<rect x="-60" y="398" width="920" height="260" fill="${G.wfill}"/></g>`,from:'none',
   lv:['translate(0px,580px)','translate(0px,335px)','translate(0px,205px)','translate(0px,345px)','translate(0px,45px)','translate(0px,452px)','translate(0px,300px)','translate(0px,398px)'],steps:[1,2,4,3,5],dur:'2.6s'},
