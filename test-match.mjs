@@ -176,7 +176,7 @@ const read=f=>readFileSync(new URL(f,import.meta.url),'utf8');
 const scene=read('./scene.js'), audio=read('./audio.js');
 const ids=(src,re)=>new Set([...src.matchAll(re)].map(m=>m[1]));
 const EL=ids(scene,/^ \{id:'(\w+)',n:/gm), SN=ids(audio,/^  (\w+):\{n:'[^']+',f\(\)/gm),
-      AM=ids(audio,/^  (\w+):\{n:'[^']+',mk\(\)/gm), SK=ids(scene,/^  (\w+):\['[^']+','/gm);
+      AM=ids(audio,/^  (\w+):\{n:'[^']+',mk\(\)/gm), SK=ids(scene,/^  (\w+):\['[^']+',/gm);
 t('scene.js y audio.js exponen ids para validar',()=>{assert.ok(EL.size>25&&SN.size>15&&AM.size===4&&SK.size>=7,[EL.size,SN.size,AM.size,SK.size].join());});
 for(const st of STORIES) st.beats.forEach((b,k)=>t(`${st.id}[${k}]: ids válidos y keys normalizadas`,()=>{
   [...(b.add||[]),...(b.rm||[]),...Object.keys(b.lv||{})].forEach(x=>assert.ok(EL.has(x),'elemento '+x));

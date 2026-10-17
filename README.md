@@ -2,9 +2,9 @@
 
 Una página única (sin build, sin librerías) para contar historias bíblicas en vivo: mientras contás, aparece la escena dibujada y suenan los efectos.
 
-Archivos: `index.html` (la página y el motor), `stories.js` (las historias), `scene.js` (los dibujos: personajes, animales, escenarios y cielos), `audio.js` (los sonidos), `match.js` (el reconocimiento de palabras clave), `test-match.mjs` (pruebas).
+Archivos: `index.html` (la página y el motor), `stories.js` (las historias), `scene.js` (qué imagen va dónde y los efectos), `img/` (las pinturas: personajes, animales, objetos y cielos en WebP), `audio.js` (los sonidos), `match.js` (el reconocimiento de palabras clave), `test-match.mjs` (pruebas).
 
-Todo se genera en el navegador: los dibujos son SVG con luces y texturas, y los sonidos se sintetizan con Web Audio (reverberación de sala, ruido de lluvia/viento/mar, voces por formantes, cuerdas de arpa). No hay imágenes ni archivos de audio.
+Los dibujos son pinturas estilo libro ilustrado (`img/*.webp`, con fondo transparente) más efectos animados en SVG (agua, lluvia, rayos, luz de Dios, estrellas). Los sonidos se sintetizan en el navegador con Web Audio (reverberación de sala, ruido de lluvia/viento/mar, voces por formantes, cuerdas de arpa); no hay archivos de audio.
 
 ## Cómo usar el modo voz ("Escuchar")
 
@@ -68,4 +68,5 @@ Es un sitio estático: en Vercel se publica la carpeta tal cual (`vercel.json` y
 
 - Sonido puntual: en `audio.js`, dentro de `SND`, agregá `{n:'Nombre', f(){ … }}` usando `osc({...})` (tonos) y `nz({...})` (ruidos). Después usá su id en `snd`.
 - Ambiente en bucle: en `AMBDEF`, con `mk()` que devuelve `{stop(){…}}`.
-- Dibujo: en `scene.js`, agregá un objeto a `E` (el orden es el de las capas, de atrás hacia adelante). Para personas usá `fig({robe:'#…', beard:…})`.
+- Dibujo: poné la imagen recortada (WebP con fondo transparente) en `img/`, anotá su tamaño en `IM` de `scene.js` y agregá un objeto a `E` (el orden es el de las capas, de atrás hacia adelante). Para una persona de pie: `person('nombre', altura)`; para cualquier imagen: `pic('nombre', centroX, pisoY, {h:altura})`.
+- Cielos: `img/sky_*.webp` (se declaran en `SKIES`).
