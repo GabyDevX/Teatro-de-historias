@@ -61,7 +61,7 @@ const STORIES=[
   {t:'Dios envió un gran pez que se lo tragó entero.',add:['whale'],lv:{whale:1,jonah:3},snd:['ballena',['chapuzon',1.4]],keys:['gran pez','pez','trago','ballena']},
   {t:'Tres días y tres noches estuvo adentro. Allí Jonás oró y le pidió perdón a Dios.',rm:['ship'],lv:{flood:4},sky:'deep',amb:['submarino','musica_misterio'],snd:['latido',['gotas',1.5]],keys:['tres dias','tres noches','oro','perdon']},
   {t:'Dios habló al pez, y este escupió a Jonás en la playa.',rm:['whale','land'],add:['sun','beach'],lv:{whale:0,flood:6,jonah:4},sky:'day',amb:['olas','pajaros','musica_calma'],snd:['ballena','chapuzon'],keys:['escupio','playa']},
-  {t:'Esta vez Jonás obedeció: fue a Nínive, la gente escuchó y decidió cambiar.',rm:['beach'],add:['land','city','crowd','trees'],lv:{jonah:5,flood:5},amb:['pajaros','murmullo','musica_triunfo'],snd:['fanfarria','multitud'],keys:['obedecio','escucho','cambiar']}
+  {t:'Esta vez Jonás obedeció: fue a Nínive, la gente escuchó y decidió cambiar.',rm:['beach','flood','fish'],add:['land','city','crowd','trees'],lv:{jonah:5},amb:['pajaros','murmullo','musica_triunfo'],snd:['fanfarria','multitud'],keys:['obedecio','escucho','cambiar']}
  ]},
  {id:'creacion',name:'La Creación',ref:'Génesis 1–2',sky0:'void',beats:[
   {t:'Al principio todo estaba oscuro y vacío… pero Dios estaba allí.',sky:'void',amb:['musica_misterio'],snd:['inicio'],keys:['principio','oscuro','vacio']},

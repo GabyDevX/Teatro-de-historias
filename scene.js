@@ -74,6 +74,9 @@ const rainSvg=()=>{
 };
 const waveD=(()=>{let d='M0 0Q50 -14 100 0'; for(let i=2;i<=12;i++) d+=`T${i*100} 0`; return d;})();
 
+/* aldeano de Nínive dibujado en SVG: el origen (0,0) son los pies */
+const villager=(robe,skin,hair)=>`<g class="breathe">${shadow(0,1,16)}<path d="M-13 0L-9 -34Q0 -40 9 -34L13 0Z" fill="${lin(robe,true)}"/><rect x="-9" y="-37" width="18" height="5" rx="2" fill="${shade(robe,-.35)}"/><path d="M-9 -34Q-17 -26 -14 -17" stroke="${robe}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M9 -34Q17 -26 14 -17" stroke="${robe}" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="-14" cy="-15" r="3" fill="${skin}"/><circle cx="14" cy="-15" r="3" fill="${skin}"/><circle cx="0" cy="-47" r="9" fill="${skin}"/><path d="M-9.5 -48Q-9 -58 0 -58Q9 -58 9.5 -48Q4 -53 -9.5 -48Z" fill="${hair}"/><circle cx="-3.2" cy="-47" r="1.1" fill="#2a1a10"/><circle cx="3.2" cy="-47" r="1.1" fill="#2a1a10"/><path d="M-3 -43Q0 -41 3 -43" stroke="#7a3a2a" stroke-width="1" fill="none"/></g>`;
+
 /* orden de capas: de atrás hacia adelante */
 const E=[
  {id:'godlight',n:'Luz de Dios',svg:`<g class="pulse" style="mix-blend-mode:screen"><circle cx="400" cy="-10" r="230" fill="${G.glow}"/><polygon points="400,-10 240,500 560,500" fill="url(#beam)"/><polygon points="400,-10 90,500 230,500" fill="url(#beam)" opacity=".55"/><polygon points="400,-10 570,500 710,500" fill="url(#beam)" opacity=".55"/><polygon points="400,-10 330,500 470,500" fill="url(#beam)" opacity=".5"/></g>${[...Array(16)].map((_,k)=>`<circle class="mote" style="animation-delay:-${(k*.7).toFixed(1)}s;animation-duration:${8+k%5}s" cx="${230+k*22}" cy="${440-(k*37)%120}" r="${1.2+k%3*.5}" fill="#fff6c8"/>`).join('')}`,from:'none'},
@@ -94,7 +97,7 @@ const E=[
  {id:'sheep',n:'Ovejas',svg:[[60,405,66],[110,418,66],[255,410,60]].map(([x,y,w])=>`${shadow(x,y,w*.4)}${pic('sheep',x,y+2,{w})}`).join(''),from:'scale(.5)'},
  {id:'lion',n:'León',svg:`${shadow(500,402,70)}${pic('lion',500,404,{w:140})}`,from:'translateX(80px)'},
  {id:'animals',n:'Animales',svg:`${shadow(90,402,50)}${pic('giraffe',90,404,{h:200})}${shadow(215,402,70)}${pic('elephant',215,404,{w:150})}${[[660,402,64],[708,406,58]].map(([x,y,w])=>`${shadow(x,y,w*.4)}${pic('sheep',x,y+2,{w})}`).join('')}`,from:'translateX(-80px)'},
- {id:'crowd',n:'Gente',svg:['david','eve','noah','jonah'].map((n,i)=>`<g transform="translate(${540+i*52},402)">${person(n,66+(i%2)*6)}</g>`).join(''),from:'translateX(60px)'},
+ {id:'crowd',n:'Gente',svg:[['#c0563c','#e3b48a','#f2e6d0'],['#3f7fb5','#b9825a','#6b3b22'],['#7a9a4a','#f0c9a0','#f2e6d0'],['#8a5aa8','#9c6a46','#3a2418'],['#d9a441','#e3b48a','#6b3b22']].map(([robe,skin,hair],i)=>`<g transform="translate(${505+i*46},402) scale(${(0.92+(i%2)*.1).toFixed(2)})">${villager(robe,skin,hair)}</g>`).join(''),from:'translateX(60px)'},
  {id:'banner',n:'Banderas',svg:`<g class="bob">${pic('banner_red',119,406,{h:190})}${pic('banner_blue',687,406,{h:190})}</g>`,from:'translateY(60px)'},
  {id:'flood',n:'Agua',svg:`<g class="swell2" opacity=".9"><g transform="translate(0 16)">${pic('water',400,403,{w:900,flip:true})}</g></g><g class="swell">${pic('water',400,403,{w:900})}<rect x="-60" y="398" width="920" height="260" fill="${G.wfill}"/></g>`,from:'none',
   lv:['translate(0px,580px)','translate(0px,335px)','translate(0px,205px)','translate(0px,345px)','translate(0px,45px)','translate(0px,452px)','translate(0px,300px)','translate(0px,398px)'],steps:[1,2,4,3,5],dur:'2.6s'},
