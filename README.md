@@ -2,7 +2,9 @@
 
 Una página única (sin build, sin librerías) para contar historias bíblicas en vivo: mientras contás, aparece la escena dibujada y suenan los efectos.
 
-Archivos: `index.html` (la página y el motor), `stories.js` (las historias), `match.js` (el reconocimiento de palabras clave), `test-match.mjs` (pruebas).
+Archivos: `index.html` (la página y el motor), `stories.js` (las historias), `scene.js` (los dibujos: personajes, animales, escenarios y cielos), `audio.js` (los sonidos), `match.js` (el reconocimiento de palabras clave), `test-match.mjs` (pruebas).
+
+Todo se genera en el navegador: los dibujos son SVG con luces y texturas, y los sonidos se sintetizan con Web Audio (reverberación de sala, ruido de lluvia/viento/mar, voces por formantes, cuerdas de arpa). No hay imágenes ni archivos de audio.
 
 ## Cómo usar el modo voz ("Escuchar")
 
@@ -39,7 +41,7 @@ Todo está en `stories.js` (arriba hay un comentario con el formato). Una histor
 | Campo | Qué hace |
 |---|---|
 | `t` | Texto que ves para contar. No se usa para reconocer la voz. |
-| `add` | Elementos que aparecen (ids de la biblioteca `E` en `index.html`: `ark`, `lion`, `sun`…). |
+| `add` | Elementos que aparecen (ids de la biblioteca `E` en `scene.js`: `ark`, `lion`, `sun`…). |
 | `rm` | Elementos que desaparecen. |
 | `lv` | Posición o nivel de un elemento: `{flood:2, ark:1}`. El número elige una posición de la lista `lv` de ese elemento. |
 | `sky` | Cielo: `day`, `dawn`, `dusk`, `night`, `storm`, `void`, `deep`. Se funde con el anterior. |
@@ -61,3 +63,9 @@ node test-match.mjs
 ## Publicar
 
 Es un sitio estático: en Vercel se publica la carpeta tal cual (`vercel.json` ya incluye lo mínimo).
+
+## Agregar un sonido o un dibujo
+
+- Sonido puntual: en `audio.js`, dentro de `SND`, agregá `{n:'Nombre', f(){ … }}` usando `osc({...})` (tonos) y `nz({...})` (ruidos). Después usá su id en `snd`.
+- Ambiente en bucle: en `AMBDEF`, con `mk()` que devuelve `{stop(){…}}`.
+- Dibujo: en `scene.js`, agregá un objeto a `E` (el orden es el de las capas, de atrás hacia adelante). Para personas usá `fig({robe:'#…', beard:…})`.

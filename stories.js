@@ -33,7 +33,7 @@ const STORIES=[
   {t:'Dios le dijo: “Construí un arca enorme, porque va a venir un diluvio.”',add:['godlight'],snd:['coro'],keys:['construi','construy','arca','diluvio','dios le dijo']},
   {t:'Noé y su familia martillaron durante años, y los vecinos se reían de ellos.',rm:['godlight'],add:['ark'],snd:['martillo'],keys:['martill','reian','vecinos','anos']},
   {t:'Pero llegaron los animales, de a dos en dos, listos para entrar.',add:['animals'],snd:['elefante',['oveja',1.1],['pajaro',2.2]],keys:['animales','de a dos','dos en dos']},
-  {t:'Noé entró con su familia y Dios cerró la puerta. El cielo empezó a oscurecerse.',rm:['sun','birds','noah','animals'],add:['cloud','stormcloud'],sky:'dusk',amb:['viento'],keys:['puerta','oscurec','cerro la puerta','entro']},
+  {t:'Noé entró con su familia y Dios cerró la puerta. El cielo empezó a oscurecerse.',rm:['sun','birds','noah','animals'],add:['stormcloud'],sky:'dusk',amb:['viento'],keys:['puerta','oscurec','cerro la puerta','entro']},
   {t:'Empezó a llover. Llovió cuarenta días y cuarenta noches.',add:['rain','lightning','flood'],sky:'storm',lv:{flood:1},amb:['lluvia','viento'],snd:['trueno'],keys:['llover','llovio','cuarenta','lluvia']},
   {t:'El agua cubrió montañas y valles, pero el arca flotaba segura.',lv:{flood:2,ark:1},amb:['lluvia','olas'],snd:[['trueno',1.5]],keys:['cubrio','montanas','flotaba','agua']},
   {t:'Por fin la lluvia paró. Silencio… solo se oía el agua.',rm:['rain','lightning','stormcloud'],sky:'dawn',amb:['olas'],keys:['paro','silencio','dejo de llover']},
