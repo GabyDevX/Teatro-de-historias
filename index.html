@@ -256,8 +256,10 @@ function ac(){
   return ctx;
 }
 const AMB={};
-function syncAmb(want){
+function syncAmb(all){
   if(!ctx) return;
+  /* la música de fondo se apaga mientras el micrófono escucha: no se mezcla con tu voz */
+  const want=new Set([...all].filter(k=>!(V.on&&k.startsWith('musica'))));
   Object.keys(AMB).forEach(k=>{if(!want.has(k)){AMB[k].stop(); delete AMB[k];}});
   want.forEach(k=>{if(!AMB[k]&&AMBDEF[k]) AMB[k]=AMBDEF[k].mk();});
 }
@@ -400,7 +402,7 @@ function vUI(){
   else if(V.paused) vStatus('Pausado: no avanzo sola. Decí “seguir” o tocá Reanudar voz.','warn');
   else vStatus('Escuchando…','on');
 }
-function vGain(){ if(out) out.gain.setTargetAtTime(outGain(),ctx.currentTime,.05); }
+function vGain(){ if(out) out.gain.setTargetAtTime(outGain(),ctx.currentTime,.05); if(S.view) syncAmb(S.view.amb); }
 
 function vAdvance(j){
   V.cooldown=Date.now()+COOLDOWN;

@@ -45,7 +45,7 @@ Todo está en `stories.js` (arriba hay un comentario con el formato). Una histor
 | `rm` | Elementos que desaparecen. |
 | `lv` | Posición o nivel de un elemento: `{flood:2, ark:1}`. El número elige una posición de la lista `lv` de ese elemento. |
 | `sky` | Cielo: `day`, `dawn`, `dusk`, `night`, `storm`, `void`, `deep`. Se funde con el anterior. |
-| `amb` | Ambientes en bucle: `lluvia`, `viento`, `olas`, `pajaros`. `[]` los apaga todos; sin `amb` siguen los de la escena anterior. |
+| `amb` | Ambientes en bucle: `lluvia`, `viento`, `olas`, `pajaros`, `grillos`, `fuego`, `murmullo`, `submarino` y música de fondo (`musica_calma`, `musica_tension`, `musica_misterio`, `musica_triunfo`; se apaga sola mientras escuchás con el micrófono). `[]` los apaga todos; sin `amb` siguen los de la escena anterior. |
 | `snd` | Efectos al entrar: `'trueno'` o `['trueno', 1.5]` (con demora en segundos). |
 | `keys` | Palabras clave para el modo voz (abajo). |
 

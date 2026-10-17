@@ -18,7 +18,8 @@ function audioInit(ctx){
   comp.threshold.value=-20; comp.knee.value=22; comp.ratio.value=3.5; comp.attack.value=.005; comp.release.value=.3;
   const lim=A.createDynamicsCompressor();
   lim.threshold.value=-2; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=.001; lim.release.value=.1;
-  master.connect(comp); comp.connect(lim); lim.connect(A.destination);
+  const sh=A.createBiquadFilter(); sh.type='highshelf'; sh.frequency.value=7000; sh.gain.value=-3;
+  master.connect(sh); sh.connect(comp); comp.connect(lim); lim.connect(A.destination);
   BUS={dry:A.createGain(),wet:A.createGain()};
   BUS.dry.connect(master);
   const conv=A.createConvolver(); conv.buffer=impulse(2.8,2.4);
@@ -354,3 +355,67 @@ const AMBDEF={
     return {stop(){alive=false; clearTimeout(tm);}};
   }}
 };
+
+/* colchón de tonos sostenidos (música y sonidos de fondo con altura definida) */
+function padBed(freqs,o){
+  const nodes=[],master=A.createGain(); master.gain.value=0; route(master,{rv:o.rv??.6},A.currentTime,0);
+  let tail=master;
+  if(o.lp){const f=A.createBiquadFilter(); f.type='lowpass'; f.frequency.value=o.lp; f.connect(master); tail=f;}
+  freqs.forEach((f,k)=>[-7,7].forEach(c=>{
+    const os=A.createOscillator(); os.type=o.type||'sawtooth'; os.frequency.value=f; os.detune.value=c;
+    const g=A.createGain(); g.gain.value=1/freqs.length/2; os.connect(g); g.connect(tail); os.start(); nodes.push(os);
+    if(o.vib){ lfoTo(os.frequency,o.vib+k*.13,f*.004,nodes); }
+  }));
+  if(o.am) lfoTo(master.gain,o.am[0],o.am[1],nodes);
+  master.gain.setTargetAtTime(o.vol,A.currentTime,1.5);
+  return {master,nodes};
+}
+/* secuenciador: llama fn() cada rnd(a,b) ms hasta que se detiene */
+function everyMs(a,b,fn){ let alive=true,tm=null; const loop=()=>{ if(!alive) return; fn(); tm=setTimeout(loop,rnd(a,b)); }; tm=setTimeout(loop,rnd(a,b)); return ()=>{alive=false; clearTimeout(tm);}; }
+const PENTA=[293.66,329.63,369.99,440,493.88,587.33,659.25,739.99];     /* Re mayor pentatónica */
+const MENOR=[220,261.63,293.66,329.63,392,440,523.25,587.33];           /* La menor pentatónica */
+const pluckNote=(f,vol,rv=.55)=>playBuf(pluck(f,2.4,.4,.9988),{vol,pan:rnd(-.5,.5),rv});
+const musicBed=(padF,padO,seq)=>{
+  const b=padBed(padF,padO), st=seq(), id=b;
+  return {stop(){ st(); stopBed(b); }};
+};
+Object.assign(AMBDEF,{
+  grillos:{n:'Grillos',mk(){
+    const stops=[0,1,2].map(i=>{ const base=rnd(4100,4900),pan=rnd(-.8,.8);
+      return everyMs(500+i*90,800+i*120,()=>{ for(let k=0;k<3;k++) osc({t:k*.045,f:base+k*30,dur:.03,vol:.13,a:.004,pan,rv:.3}); }); });
+    return {stop(){stops.forEach(s=>s());}};
+  }},
+  fuego:{n:'Fogata',mk(){
+    const b=ambBed([{c:'brown',type:'lowpass',f:260,v:.5,am:[.4,.25]},{c:'pink',type:'bandpass',f:1100,q:.7,v:.18,am:[.7,.2]}],.4);
+    const st=everyMs(40,260,()=>{ nz({c:'white',type:'bandpass',f:rnd(1800,5500),q:1.5,dur:rnd(.01,.04),vol:rnd(.1,.35),a:.001,pan:rnd(-.4,.4),rv:.15}); });
+    return {stop(){st(); stopBed(b);}};
+  }},
+  murmullo:{n:'Murmullo de gente',mk(){
+    const b=ambBed([{c:'pink',type:'bandpass',f:520,q:.9,v:.5,am:[.31,.3]},{c:'pink',type:'bandpass',f:1500,q:.8,v:.25,am:[.23,.3]}],.32);
+    const st=everyMs(300,900,()=>{ const f=rnd(120,230); osc({f,f2:f*rnd(.85,1.2),dur:rnd(.25,.6),vol:.03,type:'sawtooth',a:.06,formants:pick2([VOW.a,VOW.o,VOW.e]),pan:rnd(-.9,.9),rv:.5,vib:5,vd:5}); });
+    return {stop(){st(); stopBed(b);}};
+  }},
+  submarino:{n:'Bajo el agua',mk(){
+    const b=ambBed([{c:'brown',type:'lowpass',f:320,v:.7,am:[.07,.2]},{c:'pink',type:'lowpass',f:700,q:.5,v:.25,am:[.11,.15]}],.4);
+    const st=everyMs(400,1500,()=>{ const f=rnd(300,900); osc({f,f2:f*rnd(1.5,2.2),dur:.09,vol:.06,a:.004,pan:rnd(-.7,.7),rv:.9}); });
+    return {stop(){st(); stopBed(b);}};
+  }},
+  musica_calma:{n:'Música: calma',mk(){
+    return musicBed([73.42,110,146.83],{type:'triangle',lp:520,vol:.07,rv:.7,am:[.06,.02]},
+      ()=>everyMs(900,1700,()=>{ pluckNote(choose(PENTA),.3); if(Math.random()<.3) setTimeout(()=>pluckNote(choose(PENTA),.2),rnd(150,350)); }));
+  }},
+  musica_tension:{n:'Música: tensión',mk(){
+    return musicBed([73.42,77.78,110,116.54],{type:'sawtooth',lp:380,vol:.12,rv:.8,am:[5.2,.04],vib:.2},
+      ()=>everyMs(2800,5200,()=>{ osc({f:choose([622.25,466.16,311.13]),dur:2.4,vol:.09,a:.8,rv:1,pan:rnd(-.6,.6)}); }));
+  }},
+  musica_misterio:{n:'Música: misterio',mk(){
+    return musicBed([110,164.81,220],{type:'sine',vol:.09,rv:.95,am:[.05,.03]},
+      ()=>everyMs(1800,3600,()=>{ const f=choose(MENOR)*2; [1,2.76].forEach((r,i)=>osc({f:f*r,dur:2.8,vol:.07/(i+1),a:.01,rv:1,pan:rnd(-.7,.7)})); }));
+  }},
+  musica_triunfo:{n:'Música: triunfo',mk(){
+    const G=[392,493.88,587.33,783.99,987.77];
+    return musicBed([98,146.83,196,246.94],{type:'sawtooth',lp:1300,vol:.07,rv:.6,vib:.3},
+      ()=>everyMs(260,560,()=>{ pluckNote(choose(G),.3,.45); }));
+  }}
+});
+const pick2=choose;
